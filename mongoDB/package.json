@@ -1,0 +1,13 @@
+{
+  "name": "mongodb",
+  "scripts": {
+    "start": "node main.js",
+    "startServer": "brew services start mongodb-community@6.0",
+    "stopServer": "brew services stop mongodb-community@6.0"
+  },
+  "author": "Tomas Šinkūnas",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^4.10.0"
+  }
+}
