@@ -1,4 +1,6 @@
 const { MongoClient } = require('mongodb');
+const clc = require('cli-color');
+const notice = (obj) => console.log(clc.blue(obj));
 
 const moviesData = require('./data/movies');
 const reviewsData = require('./data/reviews');
@@ -24,12 +26,8 @@ async function main() {
       initCollection(db, 'reviews', reviewsData),
     ]);
 
-    console.log(
-      `Collections in the "${DB_NAME}" database:`,
-      await getCollectionNames(db)
-    );
-
-    console.log('---------');
+    notice(`> Collections in the "${DB_NAME}" database:`);
+    console.log(await getCollectionNames(db));
 
     await listEmbededProperties('movie 1');
     await calculateRatringWithAggregation();
@@ -47,7 +45,7 @@ async function main() {
 ///
 
 async function calculateRatringWithAggregation() {
-  console.log(`Calculate average rating using aggregation:`);
+  notice(`\n> Calculate average rating using aggregation:`);
 
   const groupOptions = {
     _id: '$shortMovieInfo.movieID',
@@ -72,7 +70,7 @@ async function calculateRatringWithAggregation() {
 }
 
 async function calculateRatingWithMapReduce() {
-  console.log(`Calculate average rating using mapReduce:`);
+  notice(`\n> Calculate average rating using mapReduce:`);
 
   const map = function () {
     emit(this.shortMovieInfo.movieID, this.rating);
@@ -152,8 +150,8 @@ async function initDatabase(client, databaseName) {
 }
 
 async function listEmbededProperties(title) {
-  console.log(
-    `Listing embeded "recent_reviews" and "studio" properties for a movie "${title}":`
+  notice(
+    `\n> Listing embeded "recent_reviews" and "studio" properties for a movie "${title}":`
   );
 
   const query = { title };
@@ -172,10 +170,12 @@ async function listEmbededProperties(title) {
 }
 
 async function listReviewsForMovie(title) {
-  console.log(`Listing all reviews for a movie "${title}":`);
+  notice(`\n> Listing all reviews for a movie "${title}":`);
 
   const query = { 'shortMovieInfo.title': title };
-  const options = { projection: { _id: 0, date: 0, shortMovieInfo: 0, userName: 0 } };
+  const options = {
+    projection: { _id: 0, date: 0, shortMovieInfo: 0, userName: 0 },
+  };
   const result = await Review.find(query, options).toArray();
 
   if (result && result.length > 0) {
@@ -187,11 +187,13 @@ async function listReviewsForMovie(title) {
 
 async function postReview() {
   const title = 'movie 1';
-  console.log('Before submiting a review:', await Movie.findOne({ title }));
+  notice(`\n> Movie "${title}" BEFORE submiting a review:`);
+  console.log(await Movie.findOne({ title }));
   await createReview({
     title,
     text: 'Best of the best!',
     rating: 11,
   });
-  console.log('After submitting a review:', await Movie.findOne({ title }));
+  notice(`\n> Movie "${title}" AFTER submiting a review:`);
+  console.log(await Movie.findOne({ title }));
 }
