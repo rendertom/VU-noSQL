@@ -6,6 +6,7 @@ const reviewsData = require('./data/reviews');
 
 const DB_URL = 'mongodb://127.0.0.1:27017';
 const DB_NAME = 'laboras';
+const MAX_RECENT_REVIEWS = 2;
 
 let db;
 let Actor, Movie, Review;
@@ -48,28 +49,33 @@ async function main() {
 ///
 
 async function calculateAverageRatingForMovie(title) {
-  console.log(`Calculate average rating for "${title}":`);
+  console.log(`Calculate average rating using aggregation:`);
 
-  const pipeline = [
-    { $match: { 'movie.title': title } },
-    {
-      $group: {
-        _id: null,
-        averageRating: { $avg: '$rating' },
-        ratingsCount: { $sum: 1 },
-      },
-    },
-  ];
+  const groupOptions = {
+    _id: '$movie._id',
+    title: { $first: '$movie.title' },
+    averageRating: { $avg: '$rating' },
+    ratingsCount: { $sum: 1 },
+  };
+
+  const sortOptions = { _id: 1, 'movie._id': 1 };
+
+  const pipeline = [{ $group: groupOptions }, { $sort: sortOptions }];
   const result = await Review.aggregate(pipeline).toArray();
   if (result && result.length > 0) {
-    console.log('Average rating:', result[0].averageRating);
-    console.log('Number of ratings:', result[0].ratingsCount);
+    result.forEach((item) => {
+      console.log(`${item.title}:`);
+      console.log('  Average rating:', item.averageRating);
+      console.log('  Number of ratings:', item.ratingsCount);
+    });
   } else {
     console.error(`Could not aggregate data for movie "${title}"`);
   }
 }
 
 async function calculateAverageRatingWithMapReduce() {
+  console.log(`Calculate average rating using mapReduce:`);
+
   const map = function () {
     emit(this.movie._id, this.rating);
   };
@@ -89,40 +95,40 @@ async function calculateAverageRatingWithMapReduce() {
 }
 
 async function createReview({ title, text, rating }) {
-  const movie = await Movie.findOne({ title });
-  if (!movie) return console.log(`Could not find movie by title ${title}`);
+  const result = await Movie.findOne(
+    { title: 'movie 1' },
+    { projection: { _id: 1 } }
+  );
+  if (!result) return console.log(`Could not find movie by title ${title}`);
 
-  const doc = {
-    movie: { _id: movie._id, title },
+  const { _id } = result;
+  const review = {
+    movie: { _id, title },
     text,
     rating,
   };
-  const { acknowledged: ac1, insertedId } = await Review.insertOne(doc);
+  const { acknowledged: ac1, insertedId } = await Review.insertOne(review);
   if (!ac1) return console.error(`Could not insert document`);
 
-  if (movie.recent_reviews.length >= 2) {
-    const { acknowledged: ac2 } = await Movie.updateOne(
-      { title },
-      { $pop: { recent_reviews: -1 } }
-    );
-    if (!ac2) return console.error(`Could not pop first element in array`);
-  }
-
-  const { acknowledged: ac3 } = await Movie.updateOne(
-    { title },
+  const recentReview = {
+    _id: insertedId,
+    rating: review.rating,
+    text: review.text,
+  };
+  const { acknowledged: ac2 } = await Movie.updateOne(
+    { _id },
     {
       $push: {
         recent_reviews: {
-          _id: insertedId,
-          rating: doc.rating,
-          text: doc.text,
+          $each: [recentReview],
+          $position: 0,
+          $slice: MAX_RECENT_REVIEWS,
         },
       },
     }
   );
-  if (!ac3) return console.error(`Could not push element into array`);
 
-  return true;
+  if (!ac2) return console.error(`Could not add recent review`);
 }
 
 async function getCollectionNames(db) {
