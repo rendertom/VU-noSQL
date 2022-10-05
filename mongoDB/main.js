@@ -1,6 +1,5 @@
 const { MongoClient } = require('mongodb');
 
-const actorsData = require('./data/actors');
 const moviesData = require('./data/movies');
 const reviewsData = require('./data/reviews');
 
@@ -9,7 +8,7 @@ const DB_NAME = 'laboras';
 const MAX_RECENT_REVIEWS = 2;
 
 let db;
-let Actor, Movie, Review;
+let Movie, Review;
 
 main();
 
@@ -20,8 +19,7 @@ async function main() {
     await client.connect();
     db = await initDatabase(client, DB_NAME);
 
-    [Actor, Movie, Review] = await Promise.all([
-      initCollection(db, 'actors', actorsData),
+    [Movie, Review] = await Promise.all([
       initCollection(db, 'movies', moviesData),
       initCollection(db, 'reviews', reviewsData),
     ]);
