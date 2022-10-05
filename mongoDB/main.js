@@ -34,11 +34,11 @@ async function main() {
     console.log('---------');
 
     await listEmbededProperties('movie 1');
-    await calculateAverageRatingForMovie('movie 1');
-    await calculateAverageRatingWithMapReduce();
+    await calculateRatringWithAggregation();
+    await calculateRatingWithMapReduce();
     await listReviewsForMovie('movie 1');
     await postReview();
-    await calculateAverageRatingForMovie('movie 1');
+    await calculateRatringWithAggregation();
   } catch (error) {
     console.error(error);
   } finally {
@@ -48,7 +48,7 @@ async function main() {
 
 ///
 
-async function calculateAverageRatingForMovie(title) {
+async function calculateRatringWithAggregation() {
   console.log(`Calculate average rating using aggregation:`);
 
   const groupOptions = {
@@ -69,11 +69,11 @@ async function calculateAverageRatingForMovie(title) {
       console.log('  Number of ratings:', item.ratingsCount);
     });
   } else {
-    console.error(`Could not aggregate data for movie "${title}"`);
+    console.error(`Could not aggregate data`);
   }
 }
 
-async function calculateAverageRatingWithMapReduce() {
+async function calculateRatingWithMapReduce() {
   console.log(`Calculate average rating using mapReduce:`);
 
   const map = function () {
