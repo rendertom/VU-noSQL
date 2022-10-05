@@ -52,13 +52,13 @@ async function calculateRatringWithAggregation() {
   console.log(`Calculate average rating using aggregation:`);
 
   const groupOptions = {
-    _id: '$movie._id',
-    title: { $first: '$movie.title' },
+    _id: '$shortMovieInfo.movieID',
+    title: { $first: '$shortMovieInfo.title' },
     averageRating: { $avg: '$rating' },
     ratingsCount: { $sum: 1 },
   };
 
-  const sortOptions = { _id: 1, 'movie._id': 1 };
+  const sortOptions = { _id: 1, 'shortMovieInfo.movieID': 1 };
 
   const pipeline = [{ $group: groupOptions }, { $sort: sortOptions }];
   const result = await Review.aggregate(pipeline).toArray();
@@ -77,7 +77,7 @@ async function calculateRatingWithMapReduce() {
   console.log(`Calculate average rating using mapReduce:`);
 
   const map = function () {
-    emit(this.movie._id, this.rating);
+    emit(this.shortMovieInfo.movieID, this.rating);
   };
   const reduce = function (_id, values) {
     return {
@@ -103,16 +103,18 @@ async function createReview({ title, text, rating }) {
 
   const { _id } = result;
   const review = {
-    movie: { _id, title },
-    text,
+    date: Date.now(),
     rating,
+    shortMovieInfo: { movieID: _id, title },
+    text,
+    userName: 'computer',
   };
   const { acknowledged: ac1, insertedId } = await Review.insertOne(review);
   if (!ac1) return console.error(`Could not insert document`);
 
   const recentReview = {
-    _id: insertedId,
     rating: review.rating,
+    reviewID: insertedId,
     text: review.text,
   };
   const { acknowledged: ac2 } = await Movie.updateOne(
@@ -153,19 +155,19 @@ async function initDatabase(client, databaseName) {
 
 async function listEmbededProperties(title) {
   console.log(
-    `Listing embeded "top_actors" and "recent_reviews" properties for a movie "${title}":`
+    `Listing embeded "recent_reviews" and "studio" properties for a movie "${title}":`
   );
 
   const query = { title };
   const options = {
-    projection: { _id: 0, top_actors: 1, recent_reviews: 1 },
+    projection: { _id: 0, recent_reviews: 1, studio: 1 },
   };
   const result = await Movie.findOne(query, options);
 
   if (result) {
-    const { top_actors, recent_reviews } = result;
-    console.log(`Top actors (${top_actors.length}): `, top_actors);
+    const { recent_reviews, studio } = result;
     console.log(`Recent reviews (${recent_reviews.length}):`, recent_reviews);
+    console.log(`Studio:`, studio);
   } else {
     console.log(`Movie "${query.title}" does not exist`);
   }
@@ -174,8 +176,8 @@ async function listEmbededProperties(title) {
 async function listReviewsForMovie(title) {
   console.log(`Listing all reviews for a movie "${title}":`);
 
-  const query = { 'movie.title': title };
-  const options = { projection: { _id: 0, movie: 0 } };
+  const query = { 'shortMovieInfo.title': title };
+  const options = { projection: { _id: 0, date: 0, shortMovieInfo: 0, userName: 0 } };
   const result = await Review.find(query, options).toArray();
 
   if (result && result.length > 0) {
