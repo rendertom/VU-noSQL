@@ -1,0 +1,15 @@
+{
+  "name": "cassandra",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "startServer": "cassandra -f"
+  },
+  "author": "Tomas Šinkūnas",
+  "license": "ISC",
+  "dependencies": {
+    "cassandra-driver": "^4.6.4",
+    "cli-color": "^2.0.3"
+  }
+}
