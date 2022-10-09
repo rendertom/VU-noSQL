@@ -32,7 +32,7 @@ Užduočiai atlikti pasirinkta filmų sritis (alia IMDB), kurioje dalyvauja dvi 
 - Taisyti ir optimizuoti.
 
 <p align="center">
-  <img src="./diagrams/data modeling methodology.png" alt="Data modeling methodology" width="600"/>  
+  <img src="./diagrams/data modeling methodology.png" alt="Data modeling methodology" width="800"/>  
 </p>
 
 ### Conceptual data model
@@ -40,7 +40,7 @@ Užduočiai atlikti pasirinkta filmų sritis (alia IMDB), kurioje dalyvauja dvi 
 Konceptinis duomenų modelis parodo, kokios esybės egzistuoja sistemoje, kaip jos tarpusavyje susijusios, ir kokius parametrus jos turi.
 
 <p align="center">
-  <img src="./diagrams/conceptual data model.png" alt="Conceptual data model" width="450"/>  
+  <img src="./diagrams/conceptual data model.png" alt="Conceptual data model" width="600"/>  
 </p>
 
 ### Application workflow and access patterns
@@ -63,7 +63,7 @@ Konceptinis duomenų modelis parodo, kokios esybės egzistuoja sistemoje, kaip j
 - Q14: Find all characters played by the actor
 
 <p align="center">
-  <img src="./diagrams/application workflow and access patterns.png" alt="Application workflow and access patterns" width="500"/>  
+  <img src="./diagrams/application workflow and access patterns.png" alt="Application workflow and access patterns" width="600"/>  
 </p>
 
 ### Physical data model
@@ -77,7 +77,7 @@ Lentelės ir jų atributai buvo supaprastinti iki minimumo, nadangi duomenys į 
 - Visose lentelėse palikti tik *svarbiausi* atributai, kurie reikalingi kad užtikrinti pilnavertį sistemos darbą. Lentlės galėtų būti papildytos papildomais atributais, tačiau tai apsunkintų rankinį duomenų suvedimą.
 
 <p align="center">
-  <img src="./diagrams/physical data model.png" alt="physical data model" width="600"/>  
+  <img src="./diagrams/physical data model.png" alt="physical data model" width="700"/>  
 </p>
 
 ---
