@@ -105,6 +105,10 @@ async function createReview({ title, text, rating }) {
     text,
     userName: 'computer',
   };
+
+  notice('\n> Submitting a new review: ');
+  console.log(review);
+
   const { acknowledged: ac1, insertedId } = await Review.insertOne(review);
   if (!ac1) return console.error(`Could not insert document`);
 
@@ -113,6 +117,10 @@ async function createReview({ title, text, rating }) {
     reviewID: insertedId,
     text: review.text,
   };
+
+  notice('\n> Submitting a new recent review: ');
+  console.log(recentReview);
+
   const { acknowledged: ac2 } = await Movie.updateOne(
     { _id },
     {
