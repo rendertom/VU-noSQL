@@ -1,0 +1,14 @@
+{
+  "name": "situacijos_analize",
+  "scripts": {
+    "start": "node main.js",
+    "startServer": "brew services start mongodb-community@6.0",
+    "stopServer": "brew services stop mongodb-community@6.0"
+  },
+  "author": "Tomas Šinkūnas",
+  "license": "ISC",
+  "dependencies": {
+    "cli-color": "^2.0.3",
+    "mongodb": "^4.10.0"
+  }
+}

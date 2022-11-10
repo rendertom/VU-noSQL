@@ -1,0 +1,6 @@
+{
+  date: Date,
+  description: String,
+  postID: Number,
+  title: String,
+}

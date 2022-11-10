@@ -1,0 +1,6 @@
+{
+  city: String,
+  country: String,
+  street: String,
+  zipCode: Number,
+}

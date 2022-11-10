@@ -1,0 +1,9 @@
+{
+  _id: Number,
+  address: Address,
+  email: String,
+  firstName: String,
+  lastName: String,
+  profilePicture: String,
+  shortPosts: ShortPost[],
+};

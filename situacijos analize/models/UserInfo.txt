@@ -1,0 +1,6 @@
+{
+  firstName: String,
+  lastName: String,
+  profilePicture: String,
+  userID: Number,
+}

@@ -1,0 +1,13 @@
+{
+  _id: Number,
+  authorInfo: AuthorInfo,
+  comments: Comment[],
+  date: Date,
+  description: String,
+  image: String,
+  numComments: Number,
+  numLikes: Number,
+  text: String,
+  title: String,
+  userID: Number,
+};
